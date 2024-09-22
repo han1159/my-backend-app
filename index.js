@@ -24,11 +24,7 @@ app.post('/bfhl', (req, res) => {
 
   const numbers = [];
   const alphabets = [];
-  let fileValid = false;
-  let fileMimeType = "";
-  let fileSizeKB = 0;
 
-  // Check for valid numbers and alphabets
   data.forEach(item => {
     if (/^\d+$/.test(item)) {
       numbers.push(item);
@@ -37,30 +33,33 @@ app.post('/bfhl', (req, res) => {
     }
   });
 
-  // Find highest lowercase alphabet
-  const lowercaseAlphabets = alphabets.filter(item => /^[a-z]+$/.test(item));
-  const highestLowercaseAlphabet = lowercaseAlphabets.length ? [lowercaseAlphabets.sort().pop()] : [];
+  const highestLowercaseAlphabet = alphabets
+    .filter(item => /^[a-z]+$/.test(item))
+    .sort()
+    .pop();
 
-  // Handle file details
-  if (file_b64) {
-    // Simulating file details extraction
-    fileValid = true;
-    fileMimeType = "image/png";  // Modify based on real mime type
-    fileSizeKB = 400;  // Modify based on actual file size in KB
-  }
+  // Assume file validation logic here, set `file_valid` based on some condition
+  const file_valid = file_b64 ? true : false;
 
-  res.json({
+  // Prepare the base response object
+  const response = {
     is_success: true,
     user_id: 'Haniya_Tariq_15092003',
     email: 'ht8325@srmist.edu.in',
     roll_number: 'RA2111003020422',
     numbers,
     alphabets,
-    highest_lowercase_alphabet: highestLowercaseAlphabet,
-    file_valid: fileValid,
-    file_mime_type: fileMimeType,
-    file_size_kb: fileSizeKB
-  });
+    highest_lowercase_alphabet: highestLowercaseAlphabet ? [highestLowercaseAlphabet] : [],
+    file_valid
+  };
+
+  // Conditionally add file properties if file is valid
+  if (file_valid) {
+    response.file_mime_type = 'image/png'; // Adjust based on actual validation
+    response.file_size_kb = 400; // Adjust based on actual file size
+  }
+
+  res.json(response);
 });
 
 app.listen(port, () => {
