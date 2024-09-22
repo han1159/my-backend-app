@@ -12,7 +12,7 @@ app.get('/bfhl', (req, res) => {
 });
 
 app.post('/bfhl', (req, res) => {
-  const { data } = req.body;
+  const { data, file_b64 } = req.body;
 
   if (!Array.isArray(data)) {
     return res.status(400).json({
@@ -24,7 +24,11 @@ app.post('/bfhl', (req, res) => {
 
   const numbers = [];
   const alphabets = [];
+  let fileValid = false;
+  let fileMimeType = "";
+  let fileSizeKB = 0;
 
+  // Check for valid numbers and alphabets
   data.forEach(item => {
     if (/^\d+$/.test(item)) {
       numbers.push(item);
@@ -33,7 +37,17 @@ app.post('/bfhl', (req, res) => {
     }
   });
 
-  const highestAlphabet = alphabets.length ? [alphabets.sort().pop()] : [];
+  // Find highest lowercase alphabet
+  const lowercaseAlphabets = alphabets.filter(item => /^[a-z]+$/.test(item));
+  const highestLowercaseAlphabet = lowercaseAlphabets.length ? [lowercaseAlphabets.sort().pop()] : [];
+
+  // Handle file details
+  if (file_b64) {
+    // Simulating file details extraction
+    fileValid = true;
+    fileMimeType = "image/png";  // Modify based on real mime type
+    fileSizeKB = 400;  // Modify based on actual file size in KB
+  }
 
   res.json({
     is_success: true,
@@ -42,7 +56,10 @@ app.post('/bfhl', (req, res) => {
     roll_number: 'RA2111003020422',
     numbers,
     alphabets,
-    highest_alphabet: highestAlphabet
+    highest_lowercase_alphabet: highestLowercaseAlphabet,
+    file_valid: fileValid,
+    file_mime_type: fileMimeType,
+    file_size_kb: fileSizeKB
   });
 });
 
